@@ -35,6 +35,14 @@ function langswitch_item( $items, $args ) {
     //  qtrans_getLanguageName($lang));
     $title = qtrans_getLanguageName($lang);
 
+    // Dirty fix to adjust displayed language
+    switch ($lang) {
+    case 'sv':
+      $title = "In Swedish"; break;
+    case 'en':
+      $title = "På engelska"; break;
+    }
+
     // Modify output
     // TODO If exists, use function for menu link html
     $items .= sprintf('<li><a href="%1$s" title="%2$s">%2$s</a></li>'."\n",
