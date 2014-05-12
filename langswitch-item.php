@@ -3,7 +3,7 @@
  * Plugin Name: qTranslate Menu Item
  * Plugin URI: http://ekologik.se/arild
  * Description: Adds language switcher menu items to end of main menu.
- * Version: 0.1
+ * Version: 0.1.1
  * Author: Arild <arild@ekologik.se>
  * Author URI: http://ekologik.se/arild
  * License: GPL2
@@ -12,44 +12,46 @@
 // TODO Require qTranslate
 
 load_plugin_textdomain( 'langswitch-item', false,
-  dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 if (!function_exists('langswitch_item')):
 // TODO Use wp_get_nav_menu_items?
 // http://codex.wordpress.org/Function_Reference/wp_get_nav_menu_items
 function langswitch_item( $items, $args ) {
-  // TODO Enable user to choose menu
+	// TODO Enable user to choose menu
 
-  // Iterate through languages
-  $langs = qtrans_getSortedLanguages();
-  foreach ($langs as $lang) {
+	// Iterate through languages
+	$langs = qtrans_getSortedLanguages();
+	// Select menu location to add switcher to
+	if( $args->theme_location == 'navigation')  {
+		foreach ($langs as $lang) {
 
-    // Don't display for current language
-    if ($lang == qtrans_getLanguage())
-      continue;
+			// Don't display for current language
+			if ($lang == qtrans_getLanguage())
+				continue;
 
-    // Prepare variables
-    $URL = qtrans_convertURL($_SERVER["REQUEST_URI"], $lang);
-    // I wanted to do as below but it's ugly when language names are not translated
-    //$title = sprintf(__('In %s', 'langswitch-item'),
-    //  qtrans_getLanguageName($lang));
-    $title = qtrans_getLanguageName($lang);
+			// Prepare variables
+			$URL = qtrans_convertURL($_SERVER["REQUEST_URI"], $lang);
+			// I wanted to do as below but it's ugly when language names are not translated
+			//$title = sprintf(__('In %s', 'langswitch-item'),
+			//  qtrans_getLanguageName($lang));
+			$title = qtrans_getLanguageName($lang);
 
-    // Dirty fix to adjust displayed language
-    switch ($lang) {
-    case 'sv':
-      $title = "In Swedish"; break;
-    case 'en':
-      $title = "På engelska"; break;
-    }
+			// Dirty fix to adjust displayed language
+			/*switch ($lang) {
+			case 'sv':
+				$title = "In Swedish"; break;
+			case 'en':
+				$title = "På engelska"; break;
+			}*/
 
-    // Modify output
-    // TODO If exists, use function for menu link html
-    $items .= sprintf('<li><a href="%1$s" title="%2$s">%2$s</a></li>'."\n",
-      $URL, $title);
-  }
-
-  return $items;
+			// Modify output
+			// TODO If exists, use function for menu link html
+			$items .= sprintf('<li class="langswitch"><a href="%1$s" title="%2$s">%2$s</a></li>'."\n",
+				$URL, $title);
+		}
+	}
+	return $items;
 }
 endif;
 
